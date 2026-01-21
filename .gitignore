@@ -145,3 +145,10 @@ spec/examples.txt
 config/local.yml
 config/local_*.yml
 *.local.yml
+
+# ============================================
+# Arquivos de Allure
+# ============================================
+reports/allure-results/
+reports/allure-report/
+!reports/allure-report/history/

@@ -178,6 +178,85 @@ invalid_user:
 
 O projeto captura automaticamente screenshots quando um cenário falha. Os arquivos são salvos em `reports/screenshots/` com o nome do cenário.
 
+## Relatórios Allure
+
+O projeto está configurado para gerar relatórios do Allure automaticamente durante a execução dos testes. Os resultados são salvos em `reports/allure-results/`.
+
+### Gerar Relatório do Allure
+
+#### Windows (PowerShell)
+
+```powershell
+# Gerar relatório
+.\scripts\generate_allure_report.ps1
+
+# Abrir relatório no navegador
+.\scripts\open_allure_report.ps1
+
+# Preparar histórico (para manter histórico entre execuções)
+.\scripts\prepare_allure_history.ps1
+```
+
+#### Linux/Mac (Bash)
+
+```bash
+# Gerar relatório
+allure generate reports/allure-results --clean -o reports/allure-report
+
+# Abrir relatório no navegador
+allure open reports/allure-report
+```
+
+### Instalar Allure CLI no Windows
+
+**Opção 1: Instalação Manual (Mais Confiável)**
+
+1. Baixe o Allure em: https://github.com/allure-framework/allure2/releases
+   - Escolha a versão mais recente (ex: `allure-2.24.1.zip`)
+   - Baixe o arquivo ZIP para Windows
+
+2. Extraia o arquivo ZIP em um diretório (ex: `C:\allure`)
+
+3. Adicione ao PATH do sistema:
+   - Abra "Variáveis de Ambiente" no Windows
+   - Edite a variável `Path` do sistema
+   - Adicione o caminho `C:\allure\bin` (ou o caminho onde você extraiu)
+   - Clique em OK para salvar
+
+4. Reinicie o PowerShell e teste:
+   ```powershell
+   allure --version
+   ```
+
+**Opção 2: Usando Scoop (Requer Scoop instalado)**
+
+Se você já tem o Scoop instalado:
+```powershell
+scoop install allure
+```
+
+Se não tem o Scoop, instale primeiro:
+```powershell
+# Instalar Scoop
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+irm get.scoop.sh | iex
+
+# Depois instalar Allure
+scoop install allure
+```
+
+**Opção 3: Usando Docker (Não requer instalação local)**
+
+```powershell
+# Gerar relatório
+docker run --rm -v "${PWD}/reports/allure-results:/app/allure-results" -v "${PWD}/reports/allure-report:/app/allure-report" "frankescobar/allure-docker-service" allure generate /app/allure-results -o /app/allure-report --clean
+
+# Abrir relatório (requer servidor web local)
+docker run --rm -p 5050:5050 -v "${PWD}/reports/allure-report:/app/allure-report" "frankescobar/allure-docker-service" allure open /app/allure-report --host 0.0.0.0 --port 5050
+```
+
+**Nota:** O pacote `allure-commandline` não está mais disponível no Chocolatey. Use uma das opções acima.
+
 ## Gems Utilizadas
 
 - **cucumber** - Framework BDD

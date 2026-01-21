@@ -122,7 +122,7 @@ Feature: Login no sistema
   # CENÁRIOS DE EXCEÇÃO
   # ============================================
 
-  @regression
+  @regression @flaky
   Scenario: Tentar realizar login quando o servidor está indisponível
     Given que estou na página de login
     When o servidor está indisponível
@@ -132,7 +132,7 @@ Feature: Login no sistema
     Then devo ver uma mensagem de erro de conexão
     And não devo estar logado no sistema
 
-  @regression
+  @regression @flaky
   Scenario: Tentar realizar login com timeout na requisição
     Given que estou na página de login
     When ocorre um timeout na requisição de login
@@ -153,7 +153,7 @@ Feature: Login no sistema
     And minha conta deve estar temporariamente bloqueada
     And não devo estar logado no sistema
 
-  @regression
+  @regression @flaky
   Scenario: Tentar realizar login com caracteres especiais maliciosos
     Given que estou na página de login
     When preencho o email com "<script>alert('xss')</script>"
@@ -163,7 +163,7 @@ Feature: Login no sistema
     And não devo estar logado no sistema
     And o sistema não deve executar código malicioso
 
-  @regression
+  @regression @flaky
   Scenario: Tentar realizar login com SQL injection no campo email
     Given que estou na página de login
     When preencho o email com "admin' OR '1'='1"
@@ -173,7 +173,7 @@ Feature: Login no sistema
     And não devo estar logado no sistema
     And o banco de dados não deve ser comprometido
 
-  @regression
+  @regression @flaky
   Scenario: Tentar realizar login com campos muito longos
     Given que estou na página de login
     When preencho o email com uma string de 500 caracteres
@@ -182,7 +182,7 @@ Feature: Login no sistema
     Then devo ver uma mensagem de erro de validação
     And não devo estar logado no sistema
 
-  @regression
+  @regression @flaky
   Scenario: Tentar realizar login após sessão expirada
     Given que estou na página de login
     When minha sessão anterior expirou
