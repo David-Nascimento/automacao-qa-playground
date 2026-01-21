@@ -4,13 +4,13 @@ Suite de testes automatizados em Ruby usando **Cucumber**, **Capybara** e **Sele
 
 O projeto utiliza **BDD (Behavior-Driven Development)** com escrita de cenários em **Gherkin** e implementação seguindo o padrão **Page Object Model (POM)**.
 
-## 📋 Requisitos
+## Requisitos
 
 - **Ruby** (versão 3.1 ou superior recomendada)
 - **Google Chrome** instalado
 - **Bundler** (`gem install bundler`)
 
-## 🚀 Instalação
+## Instalação
 
 1. Clone o repositório:
 ```bash
@@ -23,7 +23,7 @@ cd automacao-qa-playground
 bundle install
 ```
 
-## ▶️ Como Executar
+## Como Executar
 
 ### Executar todos os testes
 ```bash
@@ -61,7 +61,7 @@ bundle exec cucumber -p regression
 bundle exec cucumber -p headless
 ```
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 automacao-qa-playground/
@@ -87,17 +87,17 @@ automacao-qa-playground/
 └── README.md                      # Este arquivo
 ```
 
-## 🎯 Funcionalidades
+## Funcionalidades
 
 ### Cenários de Teste
 
 O projeto contém **19 cenários** organizados em três categorias:
 
-#### ✅ Cenários Positivos
+#### Cenários Positivos
 - Login com credenciais válidas
 - Login usando dados do arquivo YAML
 
-#### ❌ Cenários Negativos
+#### Cenários Negativos
 - Email inválido
 - Senha incorreta
 - Credenciais completamente inválidas
@@ -107,7 +107,7 @@ O projeto contém **19 cenários** organizados em três categorias:
 - Senha muito curta
 - E outros...
 
-#### ⚠️ Cenários de Exceção
+#### Cenários de Exceção
 - Servidor indisponível
 - Timeout na requisição
 - Múltiplas tentativas falhadas (bloqueio de conta)
@@ -115,7 +115,7 @@ O projeto contém **19 cenários** organizados em três categorias:
 - Campos muito longos
 - Sessão expirada
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 ### Page Object Model (POM)
 
@@ -144,7 +144,7 @@ Os step definitions estão organizados em categorias:
 - **Ações**: Clicar em botões
 - **Validações**: Verificar mensagens e estados
 
-## ⚙️ Configurações
+## Configurações
 
 ### Capybara
 - **Driver padrão**: `selenium_chrome`
@@ -174,11 +174,11 @@ invalid_user:
   password: "senha_errada"
 ```
 
-## 📸 Screenshots
+## Screenshots
 
 O projeto captura automaticamente screenshots quando um cenário falha. Os arquivos são salvos em `reports/screenshots/` com o nome do cenário.
 
-## 🔧 Gems Utilizadas
+## Gems Utilizadas
 
 - **cucumber** - Framework BDD
 - **capybara** - DSL para testes de interface web
@@ -189,7 +189,7 @@ O projeto captura automaticamente screenshots quando um cenário falha. Os arqui
 - **faker** - Geração de dados fake
 - **pry** - Debug interativo
 
-## 📝 Exemplo de Cenário
+## Exemplo de Cenário
 
 ```gherkin
 Feature: Login no sistema
@@ -206,7 +206,7 @@ Feature: Login no sistema
     And devo permanecer logado no sistema
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Erro: "uninitialized constant"
 - Certifique-se de que executou `bundle install`
@@ -220,7 +220,7 @@ Feature: Login no sistema
 - Verifique se a pasta `reports/screenshots/` existe
 - O diretório é criado automaticamente em caso de falha
 
-## 🤝 Contribuindo
+## Contribuindo
 
 1. Faça um fork do projeto
 2. Crie uma branch para sua feature (`git checkout -b feature/nova-funcionalidade`)
@@ -228,11 +228,11 @@ Feature: Login no sistema
 4. Push para a branch (`git push origin feature/nova-funcionalidade`)
 5. Abra um Pull Request
 
-## 📄 Licença
+## Licença
 
 Este projeto é de código aberto e está disponível sob a licença MIT.
 
-## 👤 Autor
+## Autor
 
 Desenvolvido para automação de testes do QA Playground.
 
