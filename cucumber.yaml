@@ -1,0 +1,5 @@
+default: --publish-quiet --format pretty --format AllureCucumber::Formatter
+smoke: -t @smoke
+regression: -t @regression
+chrome: BROWSER=chrome
+headless: BROWSER=headless

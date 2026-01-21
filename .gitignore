@@ -1,0 +1,147 @@
+# ============================================
+# Variáveis de Ambiente
+# ============================================
+.env
+.env.local
+.env.*.local
+
+# ============================================
+# Relatórios e Screenshots
+# ============================================
+reports/
+allure-results/
+allure-report/
+*.html
+*.xml
+*.json
+screenshots/
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# ============================================
+# Logs
+# ============================================
+*.log
+logs/
+cucumber.log
+rspec.log
+test.log
+
+# ============================================
+# Arquivos Ruby
+# ============================================
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+*.bundle
+vendor/bundle
+lib/bundler/man/
+.ruby-version
+.ruby-gemset
+
+# ============================================
+# Arquivos Cucumber
+# ============================================
+.cucumber/
+cucumber.yml.bak
+*.feature.bak
+
+# ============================================
+# Arquivos do Sistema Operacional
+# ============================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+.DS_Store
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================
+# IDEs e Editores
+# ============================================
+# VSCode
+.vscode/
+*.code-workspace
+
+# RubyMine / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+\#*\#
+.\#*
+
+# ============================================
+# Arquivos Temporários
+# ============================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.cache
+.cache/
+
+# ============================================
+# Arquivos de Sessão e Debug
+# ============================================
+.pry_history
+.irb_history
+*.pryrc
+
+# ============================================
+# Arquivos de Build e Compilação
+# ============================================
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+
+# ============================================
+# Arquivos de Teste e Coverage
+# ============================================
+coverage/
+.nyc_output/
+test-results/
+spec/examples.txt
+
+# ============================================
+# Arquivos de Configuração Local
+# ============================================
+config/local.yml
+config/local_*.yml
+*.local.yml
