@@ -5,3 +5,28 @@ default_user:
 invalid_user:
   email: "teste@qaplayground.com"
   password: "senha_errada"
+
+formulario_user:
+  email: "teste@email.com"
+  senha: "senha123"
+  numero: 123
+  data: "10-07-1995"
+  hora: "12:00"
+  cor: "azul"
+  range: 75
+
+register_user:
+  nome: "John Doe" 
+  email: "teste@email.com"
+  cpf: "002.002.002-02"
+  data_nascimento: "10-07-1995"
+  telefone: "1234567890"
+  cep: "61814300"
+  endereco: "Rua das Flores"
+  numero: 123
+  complemento: "Apto 101"
+  bairro: "Centro"
+  cidade: "Fortaleza"
+  estado: "Ceará"
+  password: "senha123"
+  genero: "Masculino"

@@ -1,4 +1,5 @@
-default: --publish-quiet --format pretty 
+# Formatter Allure obrigatório para gerar os JSON em reports/allure-results
+default: --publish-quiet --format pretty --format AllureCucumber::CucumberFormatter --out reports/allure-results
 retry_flaky: --retry 2 --retry-tag-filter @flaky
 smoke: -t @smoke
 regression: -t @regression

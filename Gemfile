@@ -11,3 +11,4 @@ gem 'allure-rspec' # usado internamente para anexos
 gem "dotenv"
 gem "faker"
 gem "pry"
+gem "rake"

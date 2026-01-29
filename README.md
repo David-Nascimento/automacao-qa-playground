@@ -1,6 +1,6 @@
 # Automação QA Playground
 
-Suite de testes automatizados em Ruby usando **Cucumber**, **Capybara** e **Selenium WebDriver** para validar o fluxo de login do site de exemplo [QA Playground](https://qa-playground-azure.vercel.app/pages/junior/formularios/login.html).
+Suite de testes automatizados em Ruby usando **Cucumber**, **Capybara** e **Selenium WebDriver** para validar os fluxos de **login** e **registro** do site de exemplo [QA Playground](https://qa-playground-azure.vercel.app).
 
 O projeto utiliza **BDD (Behavior-Driven Development)** com escrita de cenários em **Gherkin** e implementação seguindo o padrão **Page Object Model (POM)**.
 
@@ -25,40 +25,82 @@ bundle install
 
 ## Como Executar
 
-### Executar todos os testes
+### Usando Rake (recomendado)
+
+O Rake usa as variáveis de ambiente **`TEST`** ou **`TAGS`** para filtrar por tag. Se nenhuma tag for informada, todos os cenários são executados. Após os testes, o relatório Allure é gerado automaticamente.
+
+| Ação | Comando |
+|------|--------|
+| Todos os testes | `bundle exec rake` ou `bundle exec rake test` |
+| Por tag (env) | `TEST=@tag rake` (Linux/Mac/Git Bash) |
+| Por tag (arg) | `bundle exec rake test["@flaky"]` ou `bundle exec rake t["@flaky"]` |
+| Smoke | `bundle exec rake smoke` |
+| Headless | `bundle exec rake headless` |
+| Limpar relatórios | `bundle exec rake clean` |
+| Só gerar Allure | `bundle exec rake allure:generate` |
+
+**Exemplos por tag:**
+
 ```bash
-bundle exec cucumber
+# Linux / Mac / Git Bash
+TEST=@test rake
+TEST=@smoke rake
+TEST=@regression rake
+TAGS=@flaky rake
 ```
 
-### Executar um cenário específico
+```powershell
+# Windows PowerShell
+$env:TEST = "@smoke"; rake
+$env:TEST = "@regression"; rake
+```
+
+```cmd
+# Windows CMD
+set TEST=@smoke && rake
+```
+
+**Outras variáveis de ambiente:**
+
+- **`PROFILE`** – perfil do Cucumber (ex.: `default`, `smoke`, `regression`); padrão: `default`
+- **`BROWSER`** – driver do navegador (ex.: `chrome`, `headless`)
+
+### Execução rápida com hook (Git Bash)
+
+O script `scripts/test_hook.sh` detecta quando você digita apenas `TEST='@tag'` e executa o Rake automaticamente.
+
+1. Carregar o hook na sessão atual:
+
+```bash
+source scripts/test_hook.sh
+```
+
+2. Para ativar permanentemente (uma vez):
+
+```bash
+echo "source $(pwd)/scripts/test_hook.sh" >> ~/.bashrc
+```
+
+Depois de carregar o hook:
+
+```bash
+TEST='@smoke'
+```
+
+O hook roda `bundle exec rake test` com a tag definida.
+
+### Executar Cucumber diretamente
+
+- Rodar por tag:
+
+```bash
+bundle exec cucumber -t "@flaky"
+```
+
+- Rodar cenário específico:
+
 ```bash
 bundle exec cucumber features/login.feature:10
-```
-
-### Executar com tags
-```bash
-# Executar apenas testes de smoke
-bundle exec cucumber -t @smoke
-
-# Executar apenas testes de regressão
-bundle exec cucumber -t @regression
-```
-
-### Executar em modo headless (sem interface gráfica)
-```bash
-BROWSER=headless bundle exec cucumber
-```
-
-### Usar perfis do Cucumber
-```bash
-# Perfil smoke
-bundle exec cucumber -p smoke
-
-# Perfil regression
-bundle exec cucumber -p regression
-
-# Perfil headless
-bundle exec cucumber -p headless
 ```
 
 ## Estrutura do Projeto
@@ -67,23 +109,35 @@ bundle exec cucumber -p headless
 automacao-qa-playground/
 ├── features/
 │   ├── data/
-│   │   └── user.yaml              # Massa de dados dos usuários
+│   │   └── user.yaml              # Massa de dados (login e registro)
 │   ├── pages/
 │   │   ├── base_page.rb           # Classe base para Page Objects
-│   │   └── login_page.rb          # Page Object da página de login
+│   │   ├── login_page.rb          # Page Object da página de login
+│   │   └── register_page.rb       # Page Object da página de registro
 │   ├── step_definitions/
-│   │   └── login_steps.rb         # Step definitions dos cenários
+│   │   ├── login_steps.rb         # Step definitions do login
+│   │   └── register_steps.rb      # Step definitions do registro
 │   ├── support/
-│   │   ├── browser_helper.rb      # Configuração de drivers (Chrome/Headless)
+│   │   ├── allure.rb              # Configuração do Allure
+│   │   ├── allure_labels.rb       # Labels do Allure
 │   │   ├── capybara.rb            # Configuração do Capybara
-│   │   ├── data_helper.rb         # Helper para carregar dados YAML
 │   │   ├── env.rb                 # Carregamento automático de arquivos
-│   │   └── hooks.rb               # Hooks do Cucumber (Before/After)
-│   └── login.feature              # Arquivo Gherkin com cenários de teste
+│   │   ├── hooks.rb               # Hooks do Cucumber (Before/After)
+│   │   └── helpers/
+│   │       ├── browser_helper.rb  # Configuração de drivers (Chrome/Headless)
+│   │       ├── data_helper.rb     # Helper para carregar dados YAML
+│   │       └── page_helper.rb     # Helper de páginas (Page Object)
+│   ├── login.feature              # Cenários de login
+│   └── register.feature           # Cenários de registro
 ├── reports/
+│   ├── allure-results/            # Resultados do Allure (gerado na execução)
+│   ├── allure-report/             # Relatório Allure (gerado após testes)
 │   └── screenshots/               # Screenshots de falhas (gerado automaticamente)
+├── scripts/
+│   └── test_hook.sh               # Hook para TEST=@tag (Git Bash)
 ├── cucumber.yaml                  # Perfis de execução do Cucumber
 ├── Gemfile                        # Dependências do projeto
+├── Rakefile                       # Tasks de teste, Allure e limpeza
 └── README.md                      # Este arquivo
 ```
 
@@ -91,29 +145,16 @@ automacao-qa-playground/
 
 ### Cenários de Teste
 
-O projeto contém **19 cenários** organizados em três categorias:
+O projeto contém cenários de **login** e **registro**, organizados por tags (ex.: `@smoke`, `@regression`, `@flaky`, `@register`).
 
-#### Cenários Positivos
-- Login com credenciais válidas
-- Login usando dados do arquivo YAML
+#### Login (`login.feature`)
+- **Positivos:** login com credenciais válidas; login usando dados do YAML
+- **Negativos:** email/senha inválidos, campos vazios, formato inválido, etc.
+- **Exceção:** servidor indisponível, timeout, múltiplas falhas, XSS/SQL injection, campos longos, sessão expirada
 
-#### Cenários Negativos
-- Email inválido
-- Senha incorreta
-- Credenciais completamente inválidas
-- Campos vazios
-- Email em formato inválido
-- Email inexistente
-- Senha muito curta
-- E outros...
-
-#### Cenários de Exceção
-- Servidor indisponível
-- Timeout na requisição
-- Múltiplas tentativas falhadas (bloqueio de conta)
-- Tentativas de XSS e SQL Injection
-- Campos muito longos
-- Sessão expirada
+#### Registro (`register.feature`)
+- **Positivos:** registro com sucesso usando dados do arquivo YAML
+- **Negativos:** registro com email inválido e outros cenários de validação
 
 ## Arquitetura
 
@@ -131,10 +172,10 @@ Classe base que contém métodos comuns para todas as páginas:
 - `refresh_page` - Atualiza a página
 
 #### LoginPage
-Page Object específico da página de login com métodos para:
-- **Preenchimento**: `fill_email`, `fill_password`, `fill_email_with_length`, `fill_password_with_length`
-- **Ações**: `click_entrar_button`, `click_button_by_text`, `login`, `login_with_data`
-- **Validações**: `has_success_message?`, `has_error_message?`, `is_logged_in?`, `is_not_logged_in?`, etc.
+Page Object da página de login com métodos para preenchimento, ações (login, clicar em botões) e validações (mensagens de sucesso/erro, estado logado).
+
+#### RegisterPage
+Page Object da página de registro com métodos para preencher campos (nome, email, senha, telefone, endereço, cidade, etc.), ações (criar conta) e validações (mensagem de sucesso).
 
 ### Step Definitions
 
@@ -162,7 +203,7 @@ BROWSER=chrome
 
 ### Dados de Teste
 
-Os dados dos usuários estão em `features/data/user.yaml`:
+Os dados estão em `features/data/user.yaml`:
 
 ```yaml
 default_user:
@@ -172,6 +213,22 @@ default_user:
 invalid_user:
   email: "teste@qaplayground.com"
   password: "senha_errada"
+
+register_user:
+  nome: "John Doe"
+  email: "teste@email.com"
+  cpf: "002.002.002-02"
+  data_nascimento: "10-07-1995"
+  telefone: "1234567890"
+  cep: "61814300"
+  endereco: "Rua das Flores"
+  numero: 123
+  complemento: "Apto 101"
+  bairro: "Centro"
+  cidade: "Fortaleza"
+  estado: "Ceará"
+  password: "senha123"
+  genero: "Masculino"
 ```
 
 ## Screenshots
@@ -180,30 +237,25 @@ O projeto captura automaticamente screenshots quando um cenário falha. Os arqui
 
 ## Relatórios Allure
 
-O projeto está configurado para gerar relatórios do Allure automaticamente durante a execução dos testes. Os resultados são salvos em `reports/allure-results/`.
+O relatório Allure é **gerado automaticamente** ao final de cada execução via Rake (`rake`, `rake test`, `TEST=@smoke rake`, etc.). Os resultados ficam em `reports/allure-results/` e o relatório em `reports/allure-report/`.
 
-### Gerar Relatório do Allure
-
-#### Windows (PowerShell)
-
-```powershell
-# Gerar relatório
-.\scripts\generate_allure_report.ps1
-
-# Abrir relatório no navegador
-.\scripts\open_allure_report.ps1
-
-# Preparar histórico (para manter histórico entre execuções)
-.\scripts\prepare_allure_history.ps1
-```
-
-#### Linux/Mac (Bash)
+### Gerar ou regerar o relatório
 
 ```bash
-# Gerar relatório
-allure generate reports/allure-results --clean -o reports/allure-report
+bundle exec rake allure:generate
+```
 
-# Abrir relatório no navegador
+### Abrir o relatório no navegador
+
+**Linux / Mac / Git Bash:**
+
+```bash
+allure open reports/allure-report
+```
+
+**Windows (PowerShell):** use o Allure CLI da mesma forma após instalado:
+
+```powershell
 allure open reports/allure-report
 ```
 

@@ -14,11 +14,19 @@ class LoginPage < BasePage
 
   def fill_email(email)
     fill_in ELEMENT_EMAIL, with: email
+    find('body').click(x: 0, y: 0)
   end
 
   def fill_password(password)
-    fill_in ELEMENT_PASSWORD, with: password
+    if has_field?(ELEMENT_PASSWORD)
+      fill_in ELEMENT_PASSWORD, with: password
+    elsif has_field?("senha")
+      fill_in "senha", with: password
+    else
+      raise "Campo de senha não encontrado"
+    end
   end
+
 
   def fill_email_with_length(length)
     long_email = "a" * length + "@email.com"

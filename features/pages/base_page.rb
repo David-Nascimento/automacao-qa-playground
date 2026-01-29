@@ -28,4 +28,8 @@ class BasePage
   def refresh_page
     page.refresh
   end
+
+  def wait_for_element_to_be_visible(selector, timeout: 5)
+    page.has_selector?(selector, wait: timeout, visible: true)
+  end
 end
