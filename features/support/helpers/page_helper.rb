@@ -1,4 +1,5 @@
 module PageHelper
+
   def login_page
     @login_page ||= LoginPage.new
   end
@@ -9,6 +10,10 @@ module PageHelper
 
   def formulario_page
     @formulario_page ||= FormularioPage.new
+  end
+
+  def validacao_otp_page
+    @validacao_otp_page ||= ValidacaoOtpPage.new
   end
 
   # Método para resetar a instância quando necessário

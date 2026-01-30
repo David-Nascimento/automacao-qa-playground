@@ -1,6 +1,7 @@
 default_user:
   email: "teste@email.com"
   password: "senha123"
+  telefone: "1234567890"
 
 invalid_user:
   email: "teste@qaplayground.com"

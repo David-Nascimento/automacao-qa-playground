@@ -63,6 +63,10 @@ class RegisterPage < BasePage
         fill_in "estado", with: estado
     end
 
+    def fill_pais(pais)
+        fill_in "pais", with: pais
+    end
+
     def dropdown_genero(genero)
       select genero, from: "genero"
     end
