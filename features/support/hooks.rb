@@ -1,3 +1,10 @@
+# Marca o cenário atual como flaky no Allure (usado em cenários com tag @flaky)
+def mark_flaky
+  Allure.set_flaky
+rescue => e
+  puts "Erro ao marcar cenário como flaky: #{e.message}"
+end
+
 Before do
     Capybara.current_session.driver.browser.manage.window.maximize
 end

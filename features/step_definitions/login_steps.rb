@@ -15,7 +15,7 @@ When("preencho a senha com {string}") do |password|
 end
 
 When("preencho os campos de login com credenciais válidas do arquivo de dados") do
-  user = load_data("default_user")
+  user = load_data("user.yaml")["default_user"]
   @email = user["email"]
   @password = user["password"]
   login_page.login_with_data(user)

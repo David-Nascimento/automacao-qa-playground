@@ -34,7 +34,7 @@ Feature: Login no sistema
     When preencho o email com "email_invalido"
     And preencho a senha com "senha123"
     And clico no botão "Entrar"
-    Then devo ver a mensagem de erro "Email ou senha inválidos"
+    Then devo ver a mensagem de erro "Formato de email inválido."
     And não devo estar logado no sistema
 
   @smoke @regression
@@ -88,7 +88,7 @@ Feature: Login no sistema
     When preencho o email com "email_sem_arroba"
     And preencho a senha com "senha123"
     And clico no botão "Entrar"
-    Then devo ver a mensagem de erro "Email ou senha inválidos"
+    Then devo ver a mensagem de erro "Formato de email inválido."
     And não devo estar logado no sistema
 
   @regression
@@ -106,7 +106,7 @@ Feature: Login no sistema
     When preencho o email com "teste@@email.com"
     And preencho a senha com "senha123"
     And clico no botão "Entrar"
-    Then devo ver a mensagem de erro "Email ou senha inválidos"
+    Then devo ver a mensagem de erro "Formato de email inválido."
     And não devo estar logado no sistema
 
   @regression
