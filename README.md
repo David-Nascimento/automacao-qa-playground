@@ -1,8 +1,8 @@
 # Automação QA Playground
 
-Suite de testes automatizados em Ruby usando **Cucumber**, **Capybara** e **Selenium WebDriver** para validar os fluxos de **login** e **registro** do site de exemplo [QA Playground](https://qa-playground-azure.vercel.app).
+Suite de testes automatizados em Ruby usando **Cucumber**, **Capybara** e **Selenium WebDriver** para validar os fluxos de **login**, **registro**, **formulário** e **validação OTP** do site de exemplo [QA Playground](https://qa-playground-azure.vercel.app).
 
-O projeto utiliza **BDD (Behavior-Driven Development)** com escrita de cenários em **Gherkin** e implementação seguindo o padrão **Page Object Model (POM)**.
+O projeto utiliza **BDD (Behavior-Driven Development)** com escrita de cenários em **Gherkin** e implementação seguindo o padrão **Page Object Model (POM)**. Relatórios são gerados com **Allure**.
 
 ## Requisitos
 
@@ -35,9 +35,11 @@ O Rake usa as variáveis de ambiente **`TEST`** ou **`TAGS`** para filtrar por t
 | Por tag (env) | `TEST=@tag rake` (Linux/Mac/Git Bash) |
 | Por tag (arg) | `bundle exec rake test["@flaky"]` ou `bundle exec rake t["@flaky"]` |
 | Smoke | `bundle exec rake smoke` |
+| Flaky | `bundle exec rake flaky` (cenários com tag @flaky) |
 | Headless | `bundle exec rake headless` |
 | Limpar relatórios | `bundle exec rake clean` |
 | Só gerar Allure | `bundle exec rake allure:generate` |
+| Abrir Allure | `bundle exec rake allure:open` |
 
 **Exemplos por tag:**
 
@@ -95,12 +97,19 @@ O hook roda `bundle exec rake test` com a tag definida.
 
 ```bash
 bundle exec cucumber -t "@flaky"
+bundle exec cucumber -t "@regression" -t "not @flaky"   # regressão sem cenários flaky
 ```
 
 - Rodar cenário específico:
 
 ```bash
 bundle exec cucumber features/login.feature:10
+```
+
+- Usar perfil com retry para cenários flaky (`cucumber.yaml`):
+
+```bash
+bundle exec cucumber -p retry_flaky
 ```
 
 ## Estrutura do Projeto
@@ -112,30 +121,35 @@ automacao-qa-playground/
 │   │   └── user.yaml              # Massa de dados (login e registro)
 │   ├── pages/
 │   │   ├── base_page.rb           # Classe base para Page Objects
+│   │   ├── formulario_page.rb     # Page Object do formulário
 │   │   ├── login_page.rb          # Page Object da página de login
-│   │   └── register_page.rb       # Page Object da página de registro
+│   │   ├── register_page.rb       # Page Object da página de registro
+│   │   └── validacao_otp_page.rb  # Page Object da validação OTP
 │   ├── step_definitions/
+│   │   ├── formulario_steps.rb    # Step definitions do formulário
 │   │   ├── login_steps.rb         # Step definitions do login
-│   │   └── register_steps.rb      # Step definitions do registro
+│   │   ├── register_steps.rb      # Step definitions do registro
+│   │   └── validacao_otp_steps.rb # Step definitions da validação OTP
 │   ├── support/
 │   │   ├── allure.rb              # Configuração do Allure
-│   │   ├── allure_labels.rb       # Labels do Allure
 │   │   ├── capybara.rb            # Configuração do Capybara
 │   │   ├── env.rb                 # Carregamento automático de arquivos
-│   │   ├── hooks.rb               # Hooks do Cucumber (Before/After)
+│   │   ├── hooks.rb               # Hooks (Before/After, mark_flaky para @flaky)
 │   │   └── helpers/
 │   │       ├── browser_helper.rb  # Configuração de drivers (Chrome/Headless)
 │   │       ├── data_helper.rb     # Helper para carregar dados YAML
 │   │       └── page_helper.rb     # Helper de páginas (Page Object)
+│   ├── formulario.feature         # Cenários do formulário
 │   ├── login.feature              # Cenários de login
-│   └── register.feature           # Cenários de registro
+│   ├── register.feature           # Cenários de registro
+│   └── validacao_otp.feature       # Cenários de validação OTP (email e SMS)
 ├── reports/
 │   ├── allure-results/            # Resultados do Allure (gerado na execução)
 │   ├── allure-report/             # Relatório Allure (gerado após testes)
 │   └── screenshots/               # Screenshots de falhas (gerado automaticamente)
 ├── scripts/
 │   └── test_hook.sh               # Hook para TEST=@tag (Git Bash)
-├── cucumber.yaml                  # Perfis de execução do Cucumber
+├── cucumber.yaml                  # Perfis (default, retry_flaky, smoke, regression)
 ├── Gemfile                        # Dependências do projeto
 ├── Rakefile                       # Tasks de teste, Allure e limpeza
 └── README.md                      # Este arquivo
@@ -145,16 +159,34 @@ automacao-qa-playground/
 
 ### Cenários de Teste
 
-O projeto contém cenários de **login** e **registro**, organizados por tags (ex.: `@smoke`, `@regression`, `@flaky`, `@register`).
+O projeto contém cenários de **login**, **registro**, **formulário** e **validação OTP**, organizados por tags.
+
+#### Tags principais
+
+| Tag | Uso |
+|-----|-----|
+| `@smoke` | Conjunto reduzido de cenários críticos |
+| `@regression` | Suíte de regressão completa |
+| `@flaky` | Cenários instáveis ou dependentes de comportamento não garantido pela aplicação (marcados como flaky no Allure) |
+| `@flaky_register` | Cenários flaky específicos do registro |
+| `@formulario` | Cenários do formulário |
+| `@otpEmail`, `@otpSMS` | Validação OTP por e-mail ou SMS |
 
 #### Login (`login.feature`)
 - **Positivos:** login com credenciais válidas; login usando dados do YAML
-- **Negativos:** email/senha inválidos, campos vazios, formato inválido, etc.
-- **Exceção:** servidor indisponível, timeout, múltiplas falhas, XSS/SQL injection, campos longos, sessão expirada
+- **Negativos:** email/senha inválidos, campos vazios, formato inválido (mensagens alinhadas à aplicação: *Formato de email inválido.*, *Email ou senha inválidos* ou ausência de login)
+- **Exceção (@flaky):** servidor indisponível, timeout, múltiplas falhas, XSS/SQL injection, campos longos, sessão expirada
 
 #### Registro (`register.feature`)
 - **Positivos:** registro com sucesso usando dados do arquivo YAML
-- **Negativos:** registro com email inválido e outros cenários de validação
+- **Negativos:** registro com email inválido; cenários com caracteres especiais/SQL injection (`@flaky_register`)
+
+#### Formulário (`formulario.feature`)
+- **Positivos:** preenchimento e envio do formulário com dados válidos (data, hora, cor, range, termos)
+
+#### Validação OTP (`validacao_otp.feature`)
+- **OTP por e-mail:** envio e validação com código correto ou inválido
+- **OTP por SMS:** envio e validação com código correto ou inválido
 
 ## Arquitetura
 
@@ -172,18 +204,29 @@ Classe base que contém métodos comuns para todas as páginas:
 - `refresh_page` - Atualiza a página
 
 #### LoginPage
-Page Object da página de login com métodos para preenchimento, ações (login, clicar em botões) e validações (mensagens de sucesso/erro, estado logado).
+Page Object da página de login com métodos para preenchimento, ações (login, clicar em botões) e validações (mensagens de sucesso/erro, estado logado). As mensagens de erro aceitam variações da aplicação (ex.: *Formato de email inválido.*, *Email ou senha inválidos* ou fallback *não logado*).
 
 #### RegisterPage
 Page Object da página de registro com métodos para preencher campos (nome, email, senha, telefone, endereço, cidade, etc.), ações (criar conta) e validações (mensagem de sucesso).
 
+#### FormularioPage
+Page Object do formulário com preenchimento de campos (data, hora, cor, range), termos e envio.
+
+#### ValidacaoOtpPage
+Page Object da validação OTP com fluxos por e-mail e por SMS (envio e preenchimento dos dígitos).
+
 ### Step Definitions
 
-Os step definitions estão organizados em categorias:
+Os step definitions estão em arquivos por feature (`login_steps`, `register_steps`, `formulario_steps`, `validacao_otp_steps`) e organizados em categorias:
 - **Inicialização**: Setup da página
 - **Preenchimento**: Preencher campos do formulário
 - **Ações**: Clicar em botões
 - **Validações**: Verificar mensagens e estados
+
+### Hooks (`support/hooks.rb`)
+- **Before:** maximiza a janela do navegador
+- **Before('@flaky'):** marca o cenário como flaky no Allure (`Allure.set_flaky`) para relatórios
+- **After (falha):** captura screenshot e anexa ao Allure
 
 ## Configurações
 
@@ -315,10 +358,13 @@ docker run --rm -p 5050:5050 -v "${PWD}/reports/allure-report:/app/allure-report
 - **capybara** - DSL para testes de interface web
 - **selenium-webdriver** - Automação de navegadores
 - **webdrivers** - Gerenciamento automático de drivers
+- **allure-cucumber** - Integração Allure com Cucumber (relatórios e anexos)
+- **allure-rspec** - Suporte Allure para expectativas
 - **rspec** - Framework de testes (para expectativas)
 - **dotenv** - Gerenciamento de variáveis de ambiente
 - **faker** - Geração de dados fake
 - **pry** - Debug interativo
+- **rake** - Tasks de build e execução
 
 ## Exemplo de Cenário
 
@@ -351,6 +397,12 @@ Feature: Login no sistema
 - Verifique se a pasta `reports/screenshots/` existe
 - O diretório é criado automaticamente em caso de falha
 
+### Cenários com tag @flaky falham
+- Cenários marcados como `@flaky` testam comportamentos que a aplicação de exemplo pode não implementar (ex.: bloqueio de conta, timeout, mensagens de exceção). Eles são marcados como flaky no Allure para análise. Para rodar só a suíte estável: `bundle exec cucumber -t "@regression" -t "not @flaky"`.
+
+### Relatório Allure vazio ou sem resultados
+- Execute os testes antes (`rake test` ou `rake`). Os JSON são gravados em `reports/allure-results/`. Depois execute `rake allure:generate` e `rake allure:open` (ou use o Allure CLI diretamente).
+
 ## Contribuindo
 
 1. Faça um fork do projeto
@@ -358,15 +410,3 @@ Feature: Login no sistema
 3. Commit suas mudanças (`git commit -m 'Adiciona nova funcionalidade'`)
 4. Push para a branch (`git push origin feature/nova-funcionalidade`)
 5. Abra um Pull Request
-
-## Licença
-
-Este projeto é de código aberto e está disponível sob a licença MIT.
-
-## Autor
-
-Desenvolvido para automação de testes do QA Playground.
-
----
-
-**Nota**: Este projeto é um exemplo de automação de testes e pode ser adaptado para outros projetos seguindo a mesma estrutura.
